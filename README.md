@@ -15,7 +15,7 @@ import * as cac from "samsung-cac";
 let c = new cac.Connection("192.168.1.134");
 
 c.connect().then((conn) => {
-  console.info("Connected. Logging in...");
+  console.info("Connected. Requesting token...");
   conn.getToken().then((obj) => JSON.stringify(obj));
 });
 ```
