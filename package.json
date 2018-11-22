@@ -1,0 +1,22 @@
+{
+    "name": "samsung-cac",
+    "version": "1.0.0",
+    "description": "Code to talk to a Samsung MIM-H02 CAC airconditioner controller",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "author": "Daniel Parnell",
+    "scripts": {
+        "build": "tsc"
+    },
+    "license": "MIT",
+    "private": false,
+    "devDependencies": {
+        "@types/node": "^10.12.9",
+        "@types/xml2js": "^0.4.3",
+        "ts-node": "^7.0.1",
+        "typescript": "^3.1.6"
+    },
+    "dependencies": {
+        "xml2js": "^0.4.19"
+    }
+}
