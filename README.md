@@ -9,8 +9,10 @@ How to get a token?
 
 I obtained my token by other means, but something like the following should work after pressing the AP button on the box.
 
-```javascript
-let c = new Connection("192.168.1.134");
+```typescript
+import * as cac from "samsung-cac";
+
+let c = new cac.Connection("192.168.1.134");
 
 c.connect().then((conn) => {
   console.info("Connected. Logging in...");
@@ -23,9 +25,11 @@ Now what?
 
 You should now be able to control your airconditioner from typescript.
 
-```javascript
+```typescript
+import * as cac from "samsung-cac";
+
 const my_token = "111111111-2222-X999-Y999-9999999999999";
-let c = new Connection("192.168.1.134");
+let c = new cac.Connection("192.168.1.134");
 
 c.connect().then((conn) => {
   console.info("Connected. Logging in...");
@@ -34,7 +38,7 @@ c.connect().then((conn) => {
     conn.deviceList().then((devs) => {
       conn.deviceState(devs[0].duid).then((obj) => {
         console.info(JSON.stringify(obj));
-        conn.controlDevice(devs[0].duid, {power: PowerMode.On}).then((obj) => {
+        conn.controlDevice(devs[0].duid, {power: cac.PowerMode.On}).then((obj) => {
           console.info(JSON.stringify(obj));
         });
       });
