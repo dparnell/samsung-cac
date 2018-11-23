@@ -1,10 +1,14 @@
 {
     "name": "samsung-cac",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Code to talk to a Samsung MIM-H02 CAC airconditioner controller",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "author": "Daniel Parnell",
+    "author": "Daniel Parnell <me@danielparnell.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dparnell/samsung-cac.git"
+    },
     "scripts": {
         "build": "tsc"
     },

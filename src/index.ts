@@ -315,7 +315,7 @@ export class Connection {
             if(op) {
                 attrs.push({"$": { "ID": "AC_FUN_OPMODE", "Value": op}});
             }
-            if(target_temp !== null) {
+            if(target_temp) {
                 attrs.push({"$": { "ID": "AC_FUN_TEMPSET", "Value": target_temp}});
             }
             if(fan_speed) {
