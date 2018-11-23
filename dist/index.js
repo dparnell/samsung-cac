@@ -117,6 +117,11 @@ class Connection {
             this.stream = undefined;
         }
     }
+    log(msg) {
+        if (this.debug_log) {
+            this.debug_log(msg);
+        }
+    }
     connect() {
         return new Promise((resolve, reject) => {
             try {
@@ -128,6 +133,7 @@ class Connection {
                     while ((eolIndex = this.incoming.indexOf("\n")) >= 0) {
                         const line = this.incoming.slice(0, eolIndex + 1).trim();
                         this.incoming = this.incoming.slice(eolIndex + 1);
+                        this.log("RX: " + line);
                         if (line.startsWith("<")) {
                             xml2js.parseString(line, (err, obj) => {
                                 if (err) {
@@ -179,9 +185,14 @@ class Connection {
         });
     }
     send(req) {
+        if (this.debug_log) {
+            this.debug_log("REQUEST: " + JSON.stringify(req));
+        }
         let builder = new xml2js.Builder({ renderOpts: { pretty: false } });
         let xml = builder.buildObject(req) + "\r\n";
-        // console.log("Sending: " + xml);
+        if (this.debug_log) {
+            this.debug_log("TX: " + xml);
+        }
         this.stream.write(xml);
         return new Promise((resolve, reject) => {
             this.resolve_current_request = resolve;

@@ -139,6 +139,8 @@ export class Connection {
     resolve_current_request?: (obj: any) => any;
     reject_current_request?: (obj: any) => any;
 
+    public debug_log?:(msg: string) => void;
+
     public get Disconnected() { return this.onDisconnect.expose(); }
     public get DeviceUpdated() { return this.onUpdate.expose(); }
 
@@ -155,6 +157,12 @@ export class Connection {
         }
     }
 
+    private log(msg: string): void {
+        if(this.debug_log) {
+            this.debug_log(msg);
+        }
+    }
+
     public connect(): Promise<Connection> {
         return new Promise((resolve, reject) => {
             try {
@@ -167,7 +175,7 @@ export class Connection {
                     while((eolIndex = this.incoming.indexOf("\n")) >= 0) {
                         const line = this.incoming.slice(0, eolIndex + 1).trim();
                         this.incoming = this.incoming.slice(eolIndex + 1);
-
+                        this.log("RX: " + line);
                         if(line.startsWith("<")) {
                             xml2js.parseString(line, (err, obj) => {
                                 if(err) {
@@ -215,9 +223,14 @@ export class Connection {
     }
 
     send(req : any): Promise<any> {
+        if(this.debug_log) {
+            this.debug_log("REQUEST: " + JSON.stringify(req));
+        }
         let builder = new xml2js.Builder({renderOpts: {pretty: false}});
         let xml = builder.buildObject(req) + "\r\n";
-        // console.log("Sending: " + xml);
+        if(this.debug_log) {
+            this.debug_log("TX: " + xml);
+        }
         this.stream!.write(xml);
 
         return new Promise((resolve, reject) => {

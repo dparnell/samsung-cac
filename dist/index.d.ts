@@ -89,10 +89,12 @@ export declare class Connection {
     devices?: [Device];
     resolve_current_request?: (obj: any) => any;
     reject_current_request?: (obj: any) => any;
+    debug_log?: (msg: string) => void;
     readonly Disconnected: ILiteEvent<Connection>;
     readonly DeviceUpdated: ILiteEvent<DeviceUpdated>;
     constructor(hostname: string, port?: number);
     disconnect(): void;
+    private log;
     connect(): Promise<Connection>;
     send(req: any): Promise<any>;
     getToken(): Promise<String>;
