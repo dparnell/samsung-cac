@@ -18,8 +18,8 @@ class LiteEvent {
     off(handler) {
         this.handlers = this.handlers.filter(h => h !== handler);
     }
-    trigger(data) {
-        this.handlers.slice(0).forEach(h => h(data));
+    trigger(data, extra) {
+        this.handlers.slice(0).forEach(h => h(data, extra));
     }
     expose() {
         return this;
@@ -104,12 +104,14 @@ exports.DeviceUpdated = DeviceUpdated;
 class Connection {
     constructor(hostname, port = DEFAULT_PORT) {
         this.onDisconnect = new LiteEvent();
+        this.onError = new LiteEvent();
         this.onUpdate = new LiteEvent();
         this.hostname = hostname;
         this.port = port;
         this.incoming = "";
     }
     get Disconnected() { return this.onDisconnect.expose(); }
+    get Error() { return this.onError.expose(); }
     get DeviceUpdated() { return this.onUpdate.expose(); }
     disconnect() {
         if (this.stream) {
@@ -177,7 +179,7 @@ class Connection {
                     }
                 });
                 this.stream.on("close", () => this.onDisconnect.trigger(this));
-                this.stream.on("error", (error) => console.error(error));
+                this.stream.on("error", (error) => this.onError.trigger(this, error));
             }
             catch (_a) {
                 reject();

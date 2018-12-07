@@ -16,7 +16,7 @@ let c = new cac.Connection("192.168.1.134");
 
 c.connect().then((conn) => {
   console.info("Connected. Requesting token...");
-  conn.getToken().then((obj) => JSON.stringify(obj));
+  conn.getToken().then((obj) => console.info(JSON.stringify(obj)));
 });
 ```
 
@@ -46,3 +46,5 @@ c.connect().then((conn) => {
   });
 });
 ```
+
+There is also a [Homebridge](https://homebridge.io/) [plugin](https://github.com/dparnell/homebridge-samsung-cac) so you can also use that to control your air conditioner via Siri.

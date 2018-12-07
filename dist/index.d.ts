@@ -12,12 +12,12 @@ export interface ILiteEvent<T> {
 export declare class LiteEvent<T> implements ILiteEvent<T> {
     private handlers;
     on(handler: {
-        (data?: T): void;
+        (data?: T, extra?: any): void;
     }): void;
     off(handler: {
-        (data?: T): void;
+        (data?: T, extra?: any): void;
     }): void;
-    trigger(data?: T): void;
+    trigger(data?: T, extra?: any): void;
     expose(): ILiteEvent<T>;
 }
 export declare enum FanMode {
@@ -81,6 +81,7 @@ export declare class DeviceUpdated {
 }
 export declare class Connection {
     private readonly onDisconnect;
+    private readonly onError;
     private readonly onUpdate;
     hostname: string;
     port: number;
@@ -91,6 +92,7 @@ export declare class Connection {
     reject_current_request?: (obj: any) => any;
     debug_log?: (msg: string) => void;
     readonly Disconnected: ILiteEvent<Connection>;
+    readonly Error: ILiteEvent<Connection>;
     readonly DeviceUpdated: ILiteEvent<DeviceUpdated>;
     constructor(hostname: string, port?: number);
     disconnect(): void;

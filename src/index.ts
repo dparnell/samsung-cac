@@ -12,25 +12,24 @@ const DEFAULT_PORT = 2878;
 // TODO: work out which cipher actually works with the MIM-H02 box
 const ANY_CIPHER = tls.getCiphers().join(":").toUpperCase();
 
-
 export interface ILiteEvent<T> {
     on(handler: { (data?: T): void }) : void;
     off(handler: { (data?: T): void }) : void;
 }
 
 export class LiteEvent<T> implements ILiteEvent<T> {
-    private handlers: { (data?: T): void; }[] = [];
+    private handlers: { (data?: T, extra?: any): void; }[] = [];
 
-    public on(handler: { (data?: T): void }) : void {
+    public on(handler: { (data?: T, extra?: any): void }) : void {
         this.handlers.push(handler);
     }
 
-    public off(handler: { (data?: T): void }) : void {
+    public off(handler: { (data?: T, extra?: any): void }) : void {
         this.handlers = this.handlers.filter(h => h !== handler);
     }
 
-    public trigger(data?: T) {
-        this.handlers.slice(0).forEach(h => h(data));
+    public trigger(data?: T, extra?: any) {
+        this.handlers.slice(0).forEach(h => h(data, extra));
     }
 
     public expose() : ILiteEvent<T> {
@@ -126,6 +125,7 @@ export class DeviceUpdated {
 
 export class Connection {
     private readonly onDisconnect = new LiteEvent<Connection>();
+    private readonly onError = new LiteEvent<Connection>();
     private readonly onUpdate = new LiteEvent<DeviceUpdated>();
 
     hostname: string;
@@ -142,6 +142,7 @@ export class Connection {
     public debug_log?:(msg: string) => void;
 
     public get Disconnected() { return this.onDisconnect.expose(); }
+    public get Error() { return this.onError.expose(); }
     public get DeviceUpdated() { return this.onUpdate.expose(); }
 
     constructor(hostname : string, port : number = DEFAULT_PORT) {
@@ -215,7 +216,7 @@ export class Connection {
                     }
                 });
                 this.stream.on("close", () => this.onDisconnect.trigger(this) );
-                this.stream.on("error", (error) => console.error(error));
+                this.stream.on("error", (error) => this.onError.trigger(this, error));
             } catch {
                 reject();
             }
