@@ -217,8 +217,8 @@ export class Connection {
                 });
                 this.stream.on("close", () => this.onDisconnect.trigger(this) );
                 this.stream.on("error", (error) => this.onError.trigger(this, error));
-            } catch {
-                reject();
+            } catch(ex) {
+                reject(ex);
             }
         });
     }
