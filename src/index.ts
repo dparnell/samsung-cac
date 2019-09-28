@@ -153,7 +153,7 @@ export class Connection {
 
     public disconnect(): void {
         if(this.stream) {
-            // this.stream.disconnect();
+            this.stream.end();
             this.stream = undefined;
         }
     }

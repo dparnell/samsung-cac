@@ -1,6 +1,6 @@
 {
     "name": "samsung-cac",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Code to talk to a Samsung MIM-H02 CAC airconditioner controller",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

@@ -115,7 +115,7 @@ class Connection {
     get DeviceUpdated() { return this.onUpdate.expose(); }
     disconnect() {
         if (this.stream) {
-            // this.stream.disconnect();
+            this.stream.end();
             this.stream = undefined;
         }
     }
