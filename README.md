@@ -4,6 +4,9 @@ What is this?
 This repo contains code to talk to the Samsung MIN-H02 WiFi airconditioner controller.
 Before it can be used you will need to know the IP address of the controller and obtain a connection token.
 
+One thing to note, as the Samsung MIN-H02 device uses a very old version of the TLS protocol it will be necessary to tell node to allow the use of the older protocol as it is disabled by default in modern versions of node.
+Adding `--tls-min-v1.0` did the trick for me.
+
 How to get a token?
 ===================
 
