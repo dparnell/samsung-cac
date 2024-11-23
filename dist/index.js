@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tls = require("tls");
 const xml2js = require("xml2js");
-exports.VERSION = "1.0.0";
+exports.VERSION = "1.0.8";
 // for some reason the reported AC temperature is offset by 55C
 const CURRENT_TEMP_FUDGE = 55;
 const DEFAULT_PORT = 2878;
@@ -124,10 +124,15 @@ class Connection {
             this.debug_log(msg);
         }
     }
-    connect() {
+    connect(socketFactory) {
         return new Promise((resolve, reject) => {
             try {
-                this.stream = tls.connect({ host: this.hostname, port: this.port, rejectUnauthorized: false, ciphers: ANY_CIPHER });
+                if (socketFactory) {
+                    this.stream = socketFactory(this.hostname, this.port);
+                }
+                else {
+                    this.stream = tls.connect({ host: this.hostname, port: this.port, rejectUnauthorized: false, ciphers: ANY_CIPHER });
+                }
                 let invalidated = false;
                 this.stream.on("data", (data) => {
                     this.incoming += data.toString();

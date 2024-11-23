@@ -1,6 +1,6 @@
 /// <reference types="node" />
-import { TLSSocket } from "tls";
-export declare const VERSION = "1.0.0";
+import { Duplex } from "stream";
+export declare const VERSION = "1.0.8";
 export interface ILiteEvent<T> {
     on(handler: {
         (data?: T): void;
@@ -79,13 +79,16 @@ export declare class DeviceUpdated {
     atts: [Attr];
     constructor(connection: Connection, device: Device, atts: [Attr]);
 }
+export interface TLSSocketFactory {
+    (host: string, port: number): Duplex;
+}
 export declare class Connection {
     private readonly onDisconnect;
     private readonly onError;
     private readonly onUpdate;
     hostname: string;
     port: number;
-    stream?: TLSSocket;
+    stream?: Duplex;
     incoming: string;
     devices?: [Device];
     resolve_current_request?: (obj: any) => any;
@@ -97,7 +100,7 @@ export declare class Connection {
     constructor(hostname: string, port?: number);
     disconnect(): void;
     private log;
-    connect(): Promise<Connection>;
+    connect(socketFactory?: TLSSocketFactory): Promise<Connection>;
     send(req: any): Promise<any>;
     getToken(): Promise<String>;
     login(token: String): Promise<String>;

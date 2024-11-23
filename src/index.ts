@@ -1,9 +1,8 @@
-import * as net from "net";
 import * as tls from "tls";
-import {ConnectionOptions, TLSSocket} from "tls";
 import * as xml2js from "xml2js";
+import { Duplex } from "stream";
 
-export const VERSION = "1.0.0";
+export const VERSION = "1.0.8";
 
 // for some reason the reported AC temperature is offset by 55C
 const CURRENT_TEMP_FUDGE = 55;
@@ -123,6 +122,10 @@ export class DeviceUpdated {
     }
 }
 
+export interface TLSSocketFactory { 
+    (host: string, port: number): Duplex;
+}
+
 export class Connection {
     private readonly onDisconnect = new LiteEvent<Connection>();
     private readonly onError = new LiteEvent<Connection>();
@@ -131,7 +134,7 @@ export class Connection {
     hostname: string;
     port: number;
 
-    stream?: TLSSocket;
+    stream?: Duplex;
     incoming: string;
 
     devices?: [Device];
@@ -164,12 +167,17 @@ export class Connection {
         }
     }
 
-    public connect(): Promise<Connection> {
+    public connect(socketFactory?: TLSSocketFactory): Promise<Connection> {
         return new Promise((resolve, reject) => {
             try {
-                this.stream = tls.connect({host: this.hostname, port: this.port, rejectUnauthorized: false, ciphers: ANY_CIPHER});
+                if(socketFactory) {
+                    this.stream = socketFactory(this.hostname, this.port);
+                } else {
+                    this.stream = tls.connect({host: this.hostname, port: this.port, rejectUnauthorized: false, ciphers: ANY_CIPHER});
+                }
+
                 let invalidated = false;
-                this.stream.on("data", (data) => {
+                this.stream!.on("data", (data) => {
                     this.incoming += data.toString();
 
                     let eolIndex;
@@ -215,8 +223,8 @@ export class Connection {
                         }
                     }
                 });
-                this.stream.on("close", () => this.onDisconnect.trigger(this) );
-                this.stream.on("error", (error) => this.onError.trigger(this, error));
+                this.stream!.on("close", () => this.onDisconnect.trigger(this) );
+                this.stream!.on("error", (error) => this.onError.trigger(this, error));
             } catch(ex) {
                 reject(ex);
             }
@@ -284,7 +292,7 @@ export class Connection {
 
             this.send(req).then((obj) => {
                 this.devices = obj.Response.DeviceList[0].Device.map((dev: any) => new Device(dev.$.DUID, dev.$.GroupID, dev.$.ModelID));
-                resolve(this.devices);
+                resolve(this.devices!);
             });
         });
     }
