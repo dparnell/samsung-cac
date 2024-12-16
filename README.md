@@ -23,6 +23,8 @@ c.connect().then((conn) => {
 });
 ```
 
+See [here](https://github.com/dparnell/samsung-cac-fetch) for an example
+
 Now what?
 =========
 
